@@ -3,7 +3,7 @@ import os
 import base64
 import sys
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from core_clients.llm_client import UnifiedLLMClient
+from llm_clients.llm_client import UnifiedLLMClient
 
 class VisionQAExtractorService:
     """

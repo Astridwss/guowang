@@ -3,8 +3,8 @@ import os
 import sys
 import re
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from config.prompts import DIALOGUE_STRUCTURE_PROMPT
-from core_clients.llm_client import UnifiedLLMClient
+from core.prompts import DIALOGUE_STRUCTURE_PROMPT
+from llm_clients.llm_client import UnifiedLLMClient
 
 class RAGSynthesizerService:
     """
@@ -12,8 +12,14 @@ class RAGSynthesizerService:
     输入：原始对话文本、初始草稿、命中的标准 FAQ 字典
     输出：最终二次修正后的结构化业务文本
     """
-    def __init__(self):
-        self.llm = UnifiedLLMClient(model_type="text")
+    def __init__(self, base_url=None, api_key=None, model_name=None, temperature=None):
+        self.llm = UnifiedLLMClient(
+            model_type="text",
+            base_url=base_url,
+            api_key=api_key,
+            model_name=model_name,
+            temperature=temperature
+        )
         self.sys_prompt = DIALOGUE_STRUCTURE_PROMPT["system"]
         self.user_tpl = DIALOGUE_STRUCTURE_PROMPT["user_template"]
 

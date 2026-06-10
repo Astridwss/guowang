@@ -1,4 +1,3 @@
-# 文件路径：services/index_store.py
 import os
 import faiss
 import pickle

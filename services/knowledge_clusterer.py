@@ -15,8 +15,8 @@ class KnowledgeClustererService:
     """
     知识聚类与可视化分析服务 (完全基于 FAISS 数据库的高级洞察插件)
     职责：读取 FAISS 底层索引中的高维向量与 Payload，执行降维与无监督聚类。
-    输入：数据库文件夹db_dir。
-    输出：原来项目是输出一个交互式的 xxx.html (3D 散点图)。
+    输入：数据库文件夹db_dir，加载faiss.idnex  与 metadata.pkl。
+    输出：原来项目是输出一个交互式的 xxx.html (3D 散点图)。现在只有一个3D
         一个 _cluster_stats.xlsx (统计每个簇有多少条数据、中心点坐标)。
         一个 _domain_result.xlsx (给原始数据打上聚类标签后的明细表)。
     """

@@ -16,11 +16,9 @@ class DocumentSplitterService:
     文档提取与切分综合服务 (ETL - Extract)
     职责：统一处理底层源文件，支持读取 Excel 结构化表格 和 Word 多模态图文手册。
     """
-    def __init__(self, output_img_dir="word_images"):
+    def __init__(self, output_img_dir:str = None):
         # Word 图像输出目录
         self.output_img_dir = output_img_dir
-        if not os.path.exists(self.output_img_dir):
-            os.makedirs(self.output_img_dir)
         print("[DocumentSplitterService] 初始化文档统一解析与切分组件...")
 
     # ============================================================
@@ -54,6 +52,7 @@ class DocumentSplitterService:
             payloads.append({
                 "question": clean_q,
                 "answer": str(row.get('答案', '')),
+                "domain": str(row.get('所属系统', '未知'))
             })
             
         print(f"[DocumentSplitterService]  Excel 解析完毕，提取 {len(valid_texts)} 条有效数据。")

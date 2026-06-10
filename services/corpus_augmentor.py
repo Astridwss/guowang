@@ -10,8 +10,8 @@ import re
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from config.prompts import AUGMENTATION_PROMPT
-from core_clients.llm_client import UnifiedLLMClient
+from core.prompts import AUGMENTATION_PROMPT
+from llm_clients.llm_client import UnifiedLLMClient
 
 class CorpusAugmentorService:
     """

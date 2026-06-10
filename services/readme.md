@@ -50,7 +50,7 @@
 corpus_augmentor.py         语料增强服务    用于造数据。将一条原始客服录音，通过大模型以“急躁型”、“啰嗦型”、“专业型”进行 1 扩 3，为后期微调自有小模型积攒丰富语料。
 
 
-core_clients/ (通信网络层)：绝对与业务解耦的底层发报机。
+llm_clients/ (通信网络层)：绝对与业务解耦的底层发报机。
     llm_client.py: 统一管控文本大模型 HTTP 请求。
     embedding_client.py: 本地向量模型推理引擎。
     asr_client.py: 语音转写微服务通信。

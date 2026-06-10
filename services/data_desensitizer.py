@@ -4,7 +4,7 @@ import sys
 import re
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from config.prompts import DESENSITIZE_PROMPT
-from core_clients.llm_client import UnifiedLLMClient
+from llm_clients.llm_client import UnifiedLLMClient
 
 class DataDesensitizerService:
     """

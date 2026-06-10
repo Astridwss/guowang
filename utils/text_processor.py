@@ -81,7 +81,7 @@ class TextProcessor:
                 payloads.append({
                     "question": clean_q,
                     "answer": final_ans,
-                    #"domain": raw_domain
+                    "domain": raw_domain
                 })
                 
         return valid_texts, payloads

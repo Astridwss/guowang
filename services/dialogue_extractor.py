@@ -3,17 +3,23 @@ import os
 import sys
 import re
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from config.prompts import DIALOGUE_STRUCTURE_PROMPT
-from core_clients.llm_client import UnifiedLLMClient
+from core.prompts import DIALOGUE_STRUCTURE_PROMPT
+from llm_clients.llm_client import UnifiedLLMClient
 
 class DialogueExtractorService:
     """
     话务结构化盲提炼组件 (纯粹积木)
-    输入：对话纯文本
-    输出：包含 raw_extraction (草稿) 和 core_question (核心问题) 的字典
     """
-    def __init__(self):
-        self.llm = UnifiedLLMClient(model_type="text")
+    # 👇 改造点 1：接收平台传来的动态参数，并设置默认值为 None（兼容旧代码）
+    def __init__(self, base_url=None, api_key=None, model_name=None, temperature=None):
+        # 👇 改造点 2：将参数透传给底层的 LLM 客户端
+        self.llm = UnifiedLLMClient(
+            model_type="text",
+            base_url=base_url,
+            api_key=api_key,
+            model_name=model_name,
+            temperature=temperature
+        )
         self.sys_prompt = DIALOGUE_STRUCTURE_PROMPT["system"]
         self.user_tpl = DIALOGUE_STRUCTURE_PROMPT["user_template"]
 
