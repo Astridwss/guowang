@@ -1,0 +1,43 @@
+# === 1. 先忽略所有文件 ===
+*
+
+# === 2. 但不忽略目录本身（否则无法进入目录保留内部文件）===
+!*/
+
+# === 3. 保护 Git 自身配置 ===
+!.git/
+
+# === 4. 保留根目录指定文件 ===
+!main.py
+!README.md
+!requirements.txt
+!pyproject.toml
+!Dockerfile
+!.dockerignore
+!.gitignore
+!start.sh
+!.venv
+!uv.lock
+
+# === 5. 保留指定目录及其全部内容 ===
+!api/
+!api/**
+!core/
+!core/**
+!llm_clients/
+!llm_clients/**
+!schemas/
+!schemas/**
+!services/
+!services/**
+!use_cases/
+!use_cases/**
+!utils/
+!utils/**
+
+# === 6. 垃圾文件仍然全局忽略（放在最后确保生效）===
+**/__pycache__/
+**/*.py[cod]
+**/*$py.class
+**/.env
+**/*.log

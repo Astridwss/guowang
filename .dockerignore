@@ -1,0 +1,71 @@
+# === 1. 已构建的 Docker 镜像/归档（绝对不能进镜像！）===
+*.tar
+*.tar.gz
+*.tar.xz
+*.zip
+
+# === 2. Python 虚拟环境 ===
+.venv/
+venv/
+env/
+ENV/
+
+# === 3. IDE / 编辑器 ===
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# === 4. Git ===
+.git/
+.gitignore
+
+# === 5. Python 运行时缓存 ===
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+*.egg
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# === 6. 数据与模型（大文件）===
+data/
+database/
+# 如果 database/ 里放的是 SQLite 数据文件，排除；如果是迁移脚本，保留
+database/*.db
+database/*.sqlite
+database/*.sqlite3
+*.pt
+*.pth
+*.bin
+*.safetensors
+*.onnx
+*.h5
+*.ckpt
+*.tar
+models/
+checkpoints/
+embeddings/
+vector_store/
+chroma_db/
+
+# === 7. 日志 / 临时 / 输出 ===
+*.log
+logs/
+tmp/
+temp/
+outputs/
+results/
+downloads/
+
+# === 8. Docker 自身 ===
+Dockerfile
+.dockerignore
+
+# === 9. 其他不需要的文件 ===
+README.md          # 文档不需要进运行镜像
+*.md               # 所有 markdown
+uv.lock            # 如果 Dockerfile 里用 pip 不用 uv，这个不需要

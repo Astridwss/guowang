@@ -19,9 +19,14 @@ class CorpusAugmentorService:
     作用：将一条原始话务，以“急躁型”、“啰嗦型”、“专业型”等不同风格进行扩写。
     用于为小模型微调 (Fine-tuning) 积攒高质量、多样性的语料。
     """
-    def __init__(self):
-        # 初始化文本大模型底座
-        self.llm = UnifiedLLMClient(model_type="text")
+    def __init__(self, base_url=None, api_key=None, model_name=None, temperature=None):
+        self.llm = UnifiedLLMClient(
+            model_type="text",
+            base_url=base_url,
+            api_key=api_key,
+            model_name=model_name,
+            temperature=temperature
+        )
         self.system_prompt = AUGMENTATION_PROMPT.get("system", "你是一个专业的数据增强专家。")
         self.user_template = AUGMENTATION_PROMPT["user_template"]
 
@@ -45,42 +50,32 @@ class CorpusAugmentorService:
 
     def _parse_safely(self, text: str) -> list:
         """
-        高鲁棒性提取：优先使用 JSON 解析，若大模型输出格式崩塌，则自动切换为正则硬提取。
+        针对【纯文本轨道】的高鲁棒性文本切分器
+        完美解析：版本1：... 版本2：... 版本3：...
         """
         if not text:
             return []
-            
-        # 1. 预清洗：去除大模型可能生成的思考链或 Markdown 标记
+
+        # 1. 擦除思考链
         text = re.sub(r'<think>.*?</think>', '', text, flags=re.DOTALL).strip()
         
-        # 【修复乱码与截断的关键】：使用 `{3}` 来匹配三个反引号，防止干扰前端渲染引擎
-        clean_text = re.sub(r'`{3}(?:json)?', '', text).strip()
-        clean_text = clean_text.replace('`' * 3, '')
+        # 2. 使用正则动态切分三大版本块
+        # 匹配 “版本X：” 或 “版本X:” 之后直到下一个版本或结尾的所有内容
+        version_blocks = re.split(r'版本[123一二三][:：]', text)
         
-        # 2. 尝试优雅的 JSON 解析
-        try:
-            data = json.loads(clean_text)
-            if "samples" in data:
-                return data["samples"]
-            elif isinstance(data, list):
-                return data
-        except json.JSONDecodeError:
-            print("[业务层警告] 增强服务 JSON 解析失败，自动启动正则防御机制...")
-            
-        # 3. 兜底方案：正则硬提取 (绝对防御大模型幻觉)
-        # 针对我们在 prompts.py 中定义的格式：{"style": "急躁型", "dialogue": "..."}
+        # 因为 split 会把“版本1：”前面的杂质带出来，我们只取后面切出来的有效文本块
+        actual_contents = [block.strip() for block in version_blocks if block.strip()]
+        
         samples = []
-        pattern = r'(?:"style"|style)\s*[:：]\s*["\']?(.*?)["\']?\s*[,，].*?(?:"dialogue"|dialogue)\s*[:：]\s*["\']?(.*?)["\']?(?=\n|\}|, {|$)'
+        styles = ["同义词替换增强", "句式转换增强", "问答重组增强"] # 完美映射原项目三大核心策略
         
-        matches = re.findall(pattern, clean_text, flags=re.DOTALL)
-        for style, dialogue in matches:
+        for i, content in enumerate(actual_contents[:3]):
             samples.append({
-                "style": style.strip(),
-                "dialogue": dialogue.strip()
+                "style": styles[i],
+                "dialogue": content
             })
             
         return samples
-
 
 # ==========================================
 # 独立测试模块

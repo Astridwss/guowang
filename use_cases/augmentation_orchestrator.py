@@ -17,7 +17,7 @@ class AugmentationEngine:
     数据增强核心编排引擎 (Application Service Layer)
     职责：统筹 Pandas 读写、多线程并发调度、调用语料增强服务，以及图表生成。
     """
-    def __init__(self, work_dir: str = "data/workspace", max_workers: int = 16):
+    def __init__(self, work_dir: str = None, max_workers: int = 16):
         self.work_dir = work_dir
         self.max_workers = max_workers
 
@@ -48,7 +48,12 @@ class AugmentationEngine:
         # 1. 初始化底层语料增强服务
         # 注意：此处统一使用了 UnifiedLLMClient，如果未来需要支持前端动态切换模型，
         # 可以在 CorpusAugmentorService 的 __init__ 中预留 config 注入参数。
-        augmentor_svc = CorpusAugmentorService()
+        augmentor_svc = CorpusAugmentorService(
+            base_url=llm_config.chat_base_url if llm_config else None,
+            api_key=llm_config.chat_api_key if llm_config else None,
+            model_name=llm_config.chat_model_name if llm_config else None,
+            temperature=llm_config.temperature if llm_config else None
+        )
 
         # 2. 读取并校验数据
         log("正在解析原始会话表格...")
