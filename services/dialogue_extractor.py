@@ -41,3 +41,9 @@ class DialogueExtractorService:
         text = re.sub(r'<think>.*?</think>', '', text, flags=re.DOTALL).strip()
         match = re.search(r'问题：\s*(.+)', text)
         return match.group(1).strip() if match else ""
+    
+    def _parse_core_answer(self, text: str) -> str:
+        '''正则扣出问题'''
+        text = re.sub(r'<think>.*?</think>', '', text, flags=re.DOTALL).strip()
+        match = re.search(r'答案：\s*(.+)', text)
+        return match.group(1).strip() if match else ""

@@ -32,7 +32,7 @@ class ClusterTaskHandler:
             log_cb("正在拉取云端 FAQ 语料库文件...\n")
             local_faq_path = await download_file(faq_file_url, task_sandbox_dir)
             
-            engine = ClusterPipelineEngine(work_dir=work_dir)
+            engine = ClusterPipelineEngine(work_dir=task_sandbox_dir)
             loop = asyncio.get_running_loop()
             
             # 执行聚类引擎，拿到 HTML 路径

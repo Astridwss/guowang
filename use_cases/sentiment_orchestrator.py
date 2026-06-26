@@ -69,14 +69,10 @@ class SentimentOrchestratorPipelineEngine:
             raise KeyError("数据契约校验异常：传入的 Excel 表格中未能找到标准的 'ASR' 会话文本列！")
 
         # 2. 动态提取 API 传入的 llm_config 运行期配置，初始化服务积木
-        base_url = llm_config.chat_base_url if llm_config else None
-        api_key = llm_config.chat_api_key if llm_config else None
-        model_name = llm_config.chat_model_name if llm_config else None
-
         auditor_svc = SentimentAnalysisService(
-            base_url=base_url,
-            api_key=api_key,
-            model_name=model_name
+            base_url=llm_config.chat_base_url if llm_config else None,
+            api_key=llm_config.chat_api_key if llm_config else None,
+            model_name=llm_config.chat_model_name if llm_config else None
         )
 
         # 3. 驱动高性能多线程池，显式传参调度

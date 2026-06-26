@@ -32,8 +32,6 @@ class RAGTaskHandler:
         StateManager.append_log(task_id, f"[{time.strftime('%H:%M:%S')}] 任务启动...\n")
         
         task_sandbox_dir = os.path.join(work_dir, task_id)
-        # local_asr_path = os.path.join(work_dir, f"input_asr_{task_id}.xlsx")
-        # local_faq_path = os.path.join(work_dir, f"input_faq_{task_id}.xlsx") if faq_url else ""
         
         # 消除闭包：使用 lambda 或直接提取为一个类方法
         log_cb = lambda msg: StateManager.append_log(task_id, msg)
@@ -46,7 +44,7 @@ class RAGTaskHandler:
 
             log_cb(f"[{time.strftime('%H:%M:%S')}] 文件准备完毕，开始 AI 计算...\n")
             
-            engine = RAGPipelineEngine(work_dir=work_dir, db_dir=work_dir)
+            engine = RAGPipelineEngine(work_dir=task_sandbox_dir, db_dir=task_sandbox_dir)
             loop = asyncio.get_running_loop()
             detailed_path, opt_path = await loop.run_in_executor(
                 None, engine.run, task_id, local_asr_path, local_faq_path, llm_config, log_cb

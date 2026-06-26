@@ -3,46 +3,9 @@ import time
 import pandas as pd
 from typing import Callable
 
-from services.vector_embedding import VectorEmbeddingService
-from services.knowledge_clusterer import KnowledgeClustererService
-
-class ClusterPipelineEngine:
-    """
-    知识聚类流水线编排引擎 (Application Service Layer)
-    职责：统筹调度向量抽取大模型与本地聚类算法积木，完成业务闭环。
-    """
-    def __init__(self, work_dir: str):
-        self.work_dir = work_dir
-
-    def run(
-        self,
-        task_id: str,
-        local_faq_path: str,
-        dim_reduce: str,
-        clustering: str,
-        n_clusters: int,
-        llm_config: any,
-        log_callback: Callable[[str], None]
-    ) -> str:
-        
-        def log(msg: str):
-            log_callback(f"[{time.strftime('%H:%M:%S')}] {msg}\n")
-
-        # --- 1. 业务数据预加载 ---
-        log(f"开始解析本地表格: {os.path.basename(local_faq_path)}")
-        df = pd.read_excel(local_faq_path)
-        
-        # 智能寻找特征列
-        target_col = "问题" if "问题" in df.columns else df.columns[0]
-        questions = df[target_col].astype(str).tolist()# 文件路径：use_cases/cluster_orchestrator.py
-import os
-import time
-import pandas as pd
-from typing import Callable
-
 # 引入底层积木 (Services)
 from services.vector_embedding import VectorEmbeddingService
-from services.knowledge_clusterer import KnowledgeClustererService
+from services.knowledge_cluster import KnowledgeClustererService
 
 class ClusterPipelineEngine:
     """

@@ -12,7 +12,7 @@ class KnowledgeRetrieverService:
     输入：Numpy 向量矩阵 (由流水线调用 VectorEmbeddingService 算好后传入)
     输出：命中阈值的 FAQ 字典，或 None
     """
-    def __init__(self, db_dir: str = "database", threshold: float = 0.8):
+    def __init__(self, db_dir: str = "database", threshold: float = 0.5):
         self.threshold = threshold
         self.store = IndexStoreService(db_dir=db_dir)
         
@@ -34,5 +34,5 @@ class KnowledgeRetrieverService:
             print(f"[Retriever] 🎯 命中知识库! 相似度: {best['similarity']:.4f}")
             return best
         
-        print(f"[Retriever]  相似度 {best['similarity']:.4f} 低于阈值，实施拦截。")
-        return None
+        print(f"[Retriever]  相似度 {best['similarity']:.4f} 低于阈值")
+        return best
