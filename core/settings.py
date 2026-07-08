@@ -7,7 +7,7 @@ import os
 os.environ["NO_PROXY"] = "192.168.0.80,localhost,127.0.0.1"
 
 # 环境变量控制，默认开发环境
-ENV = os.environ.get("QA_ENV", "DEV")  
+ENV = os.environ.get("DEV", "PROD")  
 
 if ENV == "DEV":
     # ------------------------------------------
@@ -29,8 +29,12 @@ if ENV == "DEV":
     ASR_API_KEY = "dummy-asr-key"
     
     # DEV 环境无网关鉴权，Header 为空
-    GLOBAL_HEADERS = {}
+    # GLOBAL_HEADERS = {}
     
+    # GLOBAL_HEADERS = {
+    #     "Content-Type": "application/json;charset=utf-8"
+    # }
+
 elif ENV == "PROD":
     # ------------------------------------------
     # PROD 生产环境配置
@@ -53,7 +57,7 @@ elif ENV == "PROD":
     SYSTEM_CODE = "sgcc_prod_code_123"
     
     # 生产环境必须携带的鉴权 Header (这里需要你替换成局方要求的真实 Header 字段名)
-    GLOBAL_HEADERS = {
-        "X-System-Code": SYSTEM_CODE,           # 假设局方要求的键名是 X-System-Code
-        # "Authorization": f"Bearer {TEXT_LLM_KEY}" # 如果有些接口要求 Token 放 Header 也可以塞这里
-    }
+    # GLOBAL_HEADERS = {
+    #     "X-System-Code": SYSTEM_CODE,           # 假设局方要求的键名是 X-System-Code
+    #     # "Authorization": f"Bearer {TEXT_LLM_KEY}" # 如果有些接口要求 Token 放 Header 也可以塞这里
+    # }

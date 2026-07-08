@@ -16,7 +16,6 @@
 !.dockerignore
 !.gitignore
 !start.sh
-!.venv
 !uv.lock
 
 # === 5. 保留指定目录及其全部内容 ===

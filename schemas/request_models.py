@@ -11,7 +11,6 @@ class ModelConfig(BaseModel):
     chat_base_url: Optional[str] = None
     chat_api_key: Optional[str] = None
     chat_model_name: Optional[str] = None
-    temperature: Optional[float] = None
     
     # 2. 向量嵌入模型配置 (负责计算特征向量)
     embed_base_url: Optional[str] = None
@@ -22,6 +21,11 @@ class ModelConfig(BaseModel):
     vllm_base_url: Optional[str] = None
     vllm_api_key: Optional[str] = None
     vllm_model_name: Optional[str] = None
+
+    # 4. 开放高级超参配置
+    temperature: Optional[float] = None
+    top_p: Optional[float] = None
+    presence_penalty: Optional[float] = None
 
 class RagTaskSubmitRequest(BaseModel):
     """话务 POST /api/v1/rag 接口入参模型 (数据契约)"""

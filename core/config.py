@@ -15,9 +15,9 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # os.makedirs(DB_DIR, exist_ok=True)
 
 # ==========================================
-# 2. 统一暴露降级配置 (Facade 门面模式)
+# 2. 统一暴露降级配置
 # ==========================================
-ENV = settings.ENV
+# ENV = settings.ENV
 
 # Text LLM
 TEXT_LLM_URL = settings.TEXT_LLM_URL
@@ -39,4 +39,4 @@ ASR_API_URL = settings.ASR_API_URL
 ASR_API_KEY = settings.ASR_API_KEY
 
 # 全局鉴权 Header
-GLOBAL_HEADERS = settings.GLOBAL_HEADERS
+#GLOBAL_HEADERS = settings.GLOBAL_HEADERS
