@@ -31,8 +31,7 @@ class UnifiedLLMClient:
 
         self.client = OpenAI(
             base_url=self.base_url,
-            api_key=self.api_key,
-            default_headers=settings.GLOBAL_HEADERS
+            api_key=self.api_key
         )
 
     def chat_text(self, prompt: str, system_prompt: str = "") -> str:
