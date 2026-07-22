@@ -38,7 +38,7 @@ def _format_response_for_log(content: str) -> str:
         return "<空响应>"
     content = content.strip()
     if len(content) > 500:
-        return content[:500] + f"... (截断，共 {len(content)} 字符)"
+        return content[:500] + f"(截断，共 {len(content)} 字符)"
     return content
 
 

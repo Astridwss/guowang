@@ -98,12 +98,16 @@ class UnifiedLLMClient:
         发起一次多模态大模型对话请求 (严格遵循规范表1.16 / 表1.17 / 表1.18)
         """
         try:
+            if image_base64.startswith("data:image"):
+                image_value = image_base64
+            else:
+                image_value = f"data:image/jpeg;base64,{image_base64}"
             # 依据规范表1.17/1.18，多模态的 content 必须是 Array[]，图片键名必须是 image
             user_content = [
                 {"type": "text", "text": prompt},
-                {"type": "image_base64", "image": f"data:image/jpeg;base64,{image_base64}"}
+                {"type": "image_base64", "image": image_value}
             ]
-            
+                        
             messages = []
             if system_prompt:
                 # 系统提示词在多模态下也严格采用 Array 包装以确保结构稳健
