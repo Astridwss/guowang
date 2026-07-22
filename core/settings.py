@@ -2,7 +2,7 @@
 import os
 
 
-os.environ["NO_PROXY"] = "192.168.0.80,192.168.0.79,localhost,127.0.0.1,25.222.64.60"
+# os.environ["NO_PROXY"] = "192.168.0.80,192.168.0.79,localhost,127.0.0.1,25.222.64.60"
 
 
 # TEXT_LLM_URL = "http://192.168.0.80:8020/v1" 
@@ -22,18 +22,18 @@ os.environ["NO_PROXY"] = "192.168.0.80,192.168.0.79,localhost,127.0.0.1,25.222.6
 
 
 
-# TEXT_LLM_URL = "http://25.222.64.60:80/lmp-cloud-ias-server/api/llm/chat/completions/V2"
-# TEXT_LLM_KEY = "fd5dac19a44d43468dd31c96a65610e3"
-# TEXT_MODEL_NAME = "SGGM-NLP-80B-R"
+TEXT_LLM_URL = "http://25.222.64.60:80/lmp-cloud-ias-server/api/llm/chat/completions/V2"
+TEXT_LLM_KEY = "fd5dac19a44d43468dd31c96a65610e3"
+TEXT_MODEL_NAME = "SGGM-NLP-80B-R"
 
-# VL_LLM_URL = "http://25.222.64.60:80/lmp-cloud-ias-server/api/vlm/chat/completions/V2"
-# VL_LLM_KEY = "fd5dac19a44d43468dd31c96a65610e3"
-# VL_MODEL_NAME = "SGGM-VL-27B-R"
+VL_LLM_URL = "http://25.222.64.60:80/lmp-cloud-ias-server/api/vlm/chat/completions/V2"
+VL_LLM_KEY = "fd5dac19a44d43468dd31c96a65610e3"
+VL_MODEL_NAME = "SGGM-VL-27B-R"
 
-# EMBEDDING_URL = "http://egw.jn.js.sgcc.com.cn/gte/v1"
-# EMBEDDING_KEY = "YOUR_SGCC_PROD_KEY"
-# EMBEDDING_MODEL = "gte-large"
+EMBEDDING_URL = "http://egw.jn.js.sgcc.com.cn/gte/v1"
+EMBEDDING_KEY = "YOUR_SGCC_PROD_KEY"
+EMBEDDING_MODEL = "gte-large"
 
-# ASR_API_URL = "http://egw.jn.js.sgcc.com.cn/asr/v1/transcribe"
-# ASR_API_KEY = "YOUR_SGCC_PROD_KEY"
+ASR_API_URL = "http://egw.jn.js.sgcc.com.cn/asr/v1/transcribe"
+ASR_API_KEY = "YOUR_SGCC_PROD_KEY"
 

@@ -7,24 +7,12 @@ import base64
 import traceback
 
 from core import settings
+from llm_clients.llm_client import UnifiedLLMClient  # 统一入口
 
 logger = logging.getLogger("LLMHealthChecker")
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
 
 FALLBACK_TINY_IMAGE = "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEASABIAAD/2wBDAP//////////////////////////////////////////////////////////////////////////////////////wgALCAABAAEBAREA/8QAFBABAAAAAAAAAAAAAAAAAAAAAP/aAAgBAQABPxA="
-
-
-def _detect_api_format(url: str) -> str:
-    """根据 URL 特征自动判断 API 格式"""
-    if not url:
-        return "unknown"
-    if "/v1" in url or ":8000" in url or ":8002" in url or ":8020" in url:
-        # 本地 vLLM / OpenAI 兼容服务
-        return "openai"
-    if "lmp-cloud-ias-server" in url or "/api/llm/" in url or "/api/vlm/" in url:
-        # 平台网关
-        return "gateway"
-    return "unknown"
 
 
 def load_vllm_check_image_base64() -> str:
@@ -54,19 +42,6 @@ def _format_response_for_log(content: str) -> str:
     return content
 
 
-# ============ 根据配置动态导入对应的 client ============
-_api_format = _detect_api_format(getattr(settings, "TEXT_LLM_URL", ""))
-
-if _api_format == "gateway":
-    from llm_clients.llm_client_bk import UnifiedLLMClient
-    logger.info(f"[连通性测试] 检测到平台网关格式，使用平台网关 (requests 原生)")
-    _IMAGE_NEEDS_PREFIX = True  # 平台网关需要 data:image 前缀
-else:
-    from llm_clients.llm_client import UnifiedLLMClient
-    logger.info(f"[连通性测试] 检测到 OpenAI 兼容格式，使用 OpenAI SDK")
-    _IMAGE_NEEDS_PREFIX = False  # OpenAI 格式需要纯 base64
-
-
 async def check_text_llm_connectivity():
     """通过 UnifiedLLMClient.chat_text() 验证文本大模型连通性"""
     start_time = time.time()
@@ -74,7 +49,7 @@ async def check_text_llm_connectivity():
     model_name = getattr(settings, "TEXT_MODEL_NAME", "unknown")
 
     try:
-        logger.info(f"🔍 [LLM 连通性自检拉起] 目标地址: {url} | 校验模型: {model_name} | 格式: {_api_format}")
+        logger.info(f"🔍 [LLM 连通性自检拉起] 目标地址: {url} | 校验模型: {model_name}")
 
         client = UnifiedLLMClient(model_type="text")
 
@@ -106,7 +81,7 @@ async def check_text_llm_connectivity():
     except asyncio.TimeoutError:
         elapsed = time.time() - start_time
         logger.warning(
-            f"⚠️ [LLM 连通性自检超时] 耗时: {elapsed:.2f}s \n"
+            f"⚠️ [LLM 连通性自检超时] 耗时: {elapsed:.2f}s (超过 10s 探针阈值)\n"
             f"   ├─ 目标地址: {url}\n"
             f"   ├─ 校验模型: {model_name}\n"
             f"   ├─ 异常原因: client.chat_text() 调用超时\n"
@@ -131,17 +106,9 @@ async def check_vlm_connectivity():
     model_name = getattr(settings, "VL_MODEL_NAME", "unknown")
 
     try:
-        logger.info(f"🔍 [VLLM 连通性自检拉起] 目标地址: {url} | 校验模型: {model_name} | 格式: {_api_format}")
+        logger.info(f"🔍 [VLLM 连通性自检拉起] 目标地址: {url} | 校验模型: {model_name}")
 
         check_image_base64 = load_vllm_check_image_base64()
-
-        # 根据 API 格式决定是否去掉 data:image 前缀
-        if _IMAGE_NEEDS_PREFIX:
-            pure_base64 = check_image_base64  # 平台网关需要完整前缀
-            logger.info(f"🔍 [图片格式]: 平台网关格式 (带 data:image 前缀, {len(pure_base64)} 字符)")
-        else:
-            pure_base64 = check_image_base64.split(",", 1)[1] if "," in check_image_base64 else check_image_base64
-            logger.info(f"🔍 [图片格式]: OpenAI 兼容格式 (纯 base64, {len(pure_base64)} 字符)")
 
         client = UnifiedLLMClient(model_type="vision")
 
@@ -149,7 +116,7 @@ async def check_vlm_connectivity():
             asyncio.to_thread(
                 client.chat_vision,
                 prompt="这张图片是什么？",
-                image_base64=pure_base64,
+                image_base64=check_image_base64,  # 直接传，格式由 llm_client.py 内部处理
                 system_prompt="你是一个视觉助手，请用一句话描述图片。"
             ),
             timeout=15.0
@@ -174,7 +141,7 @@ async def check_vlm_connectivity():
     except asyncio.TimeoutError:
         elapsed = time.time() - start_time
         logger.warning(
-            f"⚠️ [VLLM 连通性自检超时] 耗时: {elapsed:.2f}s\n"
+            f"⚠️ [VLLM 连通性自检超时] 耗时: {elapsed:.2f}s (超过 15s 探针阈值)\n"
             f"   ├─ 目标地址: {url}\n"
             f"   ├─ 校验模型: {model_name}\n"
             f"   ├─ 异常原因: client.chat_vision() 调用超时\n"
@@ -194,7 +161,7 @@ async def check_vlm_connectivity():
 
 async def run_all_llm_health_checks():
     """异步并发执行全部自检，绝对不阻塞 FastAPI 服务的启动"""
-    logger.info(" [大模型连通性测试] 正在后台发起大模型连通性与鉴权测试...")
+    logger.info("🚀 [大模型连通性测试] 正在后台发起大模型连通性与鉴权探针巡检...")
     results = await asyncio.gather(
         check_text_llm_connectivity(),
         check_vlm_connectivity(),
@@ -203,9 +170,9 @@ async def run_all_llm_health_checks():
     for res in results:
         if isinstance(res, Exception):
             logger.warning(
-                f"⚠️ [大模型连通性测试] 测试任务内部抛出未捕获异常\n"
+                f"⚠️ [大模型连通性测试] 探针任务内部抛出未捕获异常\n"
                 f"   ├─ 异常类型: {type(res).__name__}\n"
                 f"   ├─ 异常信息: {str(res)}\n"
                 f"   └─ 堆栈跟踪:\n{traceback.format_exc()}"
             )
-    logger.info("[大模型连通性测试] 测试完毕。")
+    logger.info("[大模型连通性测试] 探针巡检全流程执行完毕。")
