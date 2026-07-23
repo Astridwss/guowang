@@ -24,11 +24,11 @@ import os
 
 TEXT_LLM_URL = "http://25.222.64.60:80/lmp-cloud-ias-server/api/llm/chat/completions/V2"
 TEXT_LLM_KEY = "fd5dac19a44d43468dd31c96a65610e3"
-TEXT_MODEL_NAME = "SGGM-NLP-80B-R"
+TEXT_MODEL_NAME = "SGGM-NLP-80B-C"
 
 VL_LLM_URL = "http://25.222.64.60:80/lmp-cloud-ias-server/api/vlm/chat/completions/V2"
 VL_LLM_KEY = "fd5dac19a44d43468dd31c96a65610e3"
-VL_MODEL_NAME = "SGGM-VL-27B-R"
+VL_MODEL_NAME = "SGGM-VL-8B"
 
 EMBEDDING_URL = "http://egw.jn.js.sgcc.com.cn/gte/v1"
 EMBEDDING_KEY = "YOUR_SGCC_PROD_KEY"

@@ -12,7 +12,7 @@ from llm_clients.llm_client import UnifiedLLMClient  # 统一入口
 logger = logging.getLogger("LLMHealthChecker")
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
 
-FALLBACK_TINY_IMAGE = "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEASABIAAD/2wBDAP//////////////////////////////////////////////////////////////////////////////////////wgALCAABAAEBAREA/8QAFBABAAAAAAAAAAAAAAAAAAAAAP/aAAgBAQABPxA="
+FALLBACK_TINY_IMAGE = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU55Jgk="
 
 
 def load_vllm_check_image_base64() -> str:
@@ -53,13 +53,9 @@ async def check_text_llm_connectivity():
 
         client = UnifiedLLMClient(model_type="text")
 
-        result = await asyncio.wait_for(
-            asyncio.to_thread(
+        result = await asyncio.to_thread(
                 client.chat_text,
-                prompt="你好",
-                system_prompt="你是一个 helpful assistant，请用一句话回复。"
-            ),
-            timeout=10.0
+                prompt="你好"
         )
 
         elapsed = time.time() - start_time
@@ -112,14 +108,10 @@ async def check_vlm_connectivity():
 
         client = UnifiedLLMClient(model_type="vision")
 
-        result = await asyncio.wait_for(
-            asyncio.to_thread(
-                client.chat_vision,
-                prompt="这张图片是什么？",
-                image_base64=check_image_base64,  # 直接传，格式由 llm_client.py 内部处理
-                system_prompt="你是一个视觉助手，请用一句话描述图片。"
-            ),
-            timeout=15.0
+        result = await asyncio.to_thread(
+            client.chat_vision,
+            prompt="这张图片是什么？",
+            image_base64=check_image_base64
         )
 
         elapsed = time.time() - start_time
@@ -161,7 +153,7 @@ async def check_vlm_connectivity():
 
 async def run_all_llm_health_checks():
     """异步并发执行全部自检，绝对不阻塞 FastAPI 服务的启动"""
-    logger.info("🚀 [大模型连通性测试] 正在后台发起大模型连通性与鉴权探针巡检...")
+    logger.info("🔍 [大模型连通性测试] 正在后台发起大模型连通性与鉴权探针巡检...")
     results = await asyncio.gather(
         check_text_llm_connectivity(),
         check_vlm_connectivity(),
